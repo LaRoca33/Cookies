@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ingreso de Usuario</title>
+</head>
+<body>
+<h2>Introduce tu usuario</h2>
+<form action="/correo/validarUsuario" method="post">
+  <input type="text" name="usuario" required placeholder="Nombre de usuario">
+  <button type="submit">Siguiente</button>
+</form>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+</body>
+</html>
+

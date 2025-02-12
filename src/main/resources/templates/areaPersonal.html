@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <title>Área Personal</title>
+</head>
+<body>
+<h2>Bienvenido a tu área personal, <span th:text="${usuario}"></span></h2>
+<p>Has iniciado sesión <span th:text="${contador}"></span> veces.</p>
+<form action="/correo/logout" method="post">
+    <button type="submit">Cerrar sesión</button>
+</form>
+</body>
+</html>
+

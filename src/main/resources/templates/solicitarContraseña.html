@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ingrese su contraseña</title>
+</head>
+<body>
+<h2>Bienvenido, <span th:text="${usuario}"></span></h2>
+<form action="/correo/validarContraseña" method="post">
+    <input type="hidden" name="usuario" th:value="${usuario}">
+    <input type="password" name="contraseña" required placeholder="Contraseña">
+    <button type="submit">Ingresar</button>
+</form>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+</body>
+</html>
+
