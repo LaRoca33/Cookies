@@ -55,6 +55,11 @@ import java.util.Map;
         }
     }
 
+    @GetMapping("/validarUsuario")
+    public String evitarSalto(){
+        return "redirect:/correo/usuario";
+    }
+
     @PostMapping("/validarUsuario")
     public String validarUsuario(@RequestParam String usuario, HttpServletResponse response, Model model) {
         if (usuarios.containsKey(usuario)) {
@@ -65,9 +70,15 @@ import java.util.Map;
             return "solicitarContraseña";
         } else {
             model.addAttribute("error", "Usuario no encontrado");
-            return "solicitarUsuario";
+            return "redirect:/correo/usuario";
         }
     }
+
+    @GetMapping("/validarContraseña")
+    public String evitarSalto2(){
+        return "redirect:/correo/usuario";
+    }
+
 
     @PostMapping("/validarContraseña")
     public String validarContraseña(@RequestParam String usuario, @RequestParam String contraseña, HttpServletRequest request, HttpServletResponse response, Model model) {
@@ -84,7 +95,7 @@ import java.util.Map;
         }
 
         if (!usuarioValido) {
-            return "redirect:/correo";
+            return "redirect:/correo/usuario";
         }
 
         Usuario user = usuarios.get(usuario);
