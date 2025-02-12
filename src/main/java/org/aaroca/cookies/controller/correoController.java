@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-
 @Controller
 @RequestMapping("/correo")
- class CorreoController {
+class CorreoController {
     private static final Map<String, Usuario> usuarios = new HashMap<>();
 
     static {
@@ -41,9 +40,10 @@ import java.util.Map;
         }
 
         if (usuario == null || usuario.isEmpty()) {
+            model.addAttribute("usuario", new Usuario("", ""));  // Usuario vacío
             return "solicitarUsuario";
         } else if (desconectado) {
-            model.addAttribute("usuario", usuario);
+            model.addAttribute("usuario", new Usuario(usuario, ""));  // Usuario con nombre y contraseña vacíos
             return "solicitarContraseña";
         } else {
             contador++;
@@ -61,33 +61,27 @@ import java.util.Map;
     }
 
     @PostMapping("/validarUsuario")
-    public String validarUsuario(@RequestParam String usuario, HttpServletResponse response, Model model) {
-        if (usuarios.containsKey(usuario)) {
-            response.addCookie(new Cookie("usuario", usuario));
+    public String validarUsuario(@ModelAttribute Usuario usuario, HttpServletResponse response, Model model) {
+        if (usuarios.containsKey(usuario.getNombre())) {
+            response.addCookie(new Cookie("usuario", usuario.getNombre()));
             response.addCookie(new Cookie("contador", "0"));
             response.addCookie(new Cookie("desconectado", "true"));
             model.addAttribute("usuario", usuario);
             return "solicitarContraseña";
         } else {
             model.addAttribute("error", "Usuario no encontrado");
-            return "redirect:/correo/usuario";
+            return "solicitarUsuario";
         }
     }
 
-    @GetMapping("/validarContraseña")
-    public String evitarSalto2(){
-        return "redirect:/correo/usuario";
-    }
-
-
     @PostMapping("/validarContraseña")
-    public String validarContraseña(@RequestParam String usuario, @RequestParam String contraseña, HttpServletRequest request, HttpServletResponse response, Model model) {
+    public String validarContraseña(@ModelAttribute Usuario usuario, HttpServletRequest request, HttpServletResponse response, Model model) {
         Cookie[] cookies = request.getCookies();
         int contador = 0;
         boolean usuarioValido = false;
 
         for (Cookie cookie : cookies) {
-            if ("usuario".equals(cookie.getName()) && cookie.getValue().equals(usuario)) {
+            if ("usuario".equals(cookie.getName()) && cookie.getValue().equals(usuario.getNombre())) {
                 usuarioValido = true;
             } else if ("contador".equals(cookie.getName())) {
                 contador = Integer.parseInt(cookie.getValue());
@@ -98,13 +92,13 @@ import java.util.Map;
             return "redirect:/correo/usuario";
         }
 
-        Usuario user = usuarios.get(usuario);
-        if (user != null && user.getContraseña().equals(contraseña)) {
+        Usuario user = usuarios.get(usuario.getNombre());
+        if (user != null && user.getContraseña().equals(usuario.getContraseña())) {
             contador++;
-            response.addCookie(new Cookie("usuario", usuario));
+            response.addCookie(new Cookie("usuario", usuario.getNombre()));
             response.addCookie(new Cookie("contador", String.valueOf(contador)));
             response.addCookie(new Cookie("desconectado", "false"));
-            model.addAttribute("usuario", usuario);
+            model.addAttribute("usuario", usuario.getNombre());
             model.addAttribute("contador", contador);
             return "areaPersonal";
         } else {
@@ -116,7 +110,6 @@ import java.util.Map;
 
     @PostMapping("/logout")
     public String logout(HttpServletResponse response) {
-
         response.addCookie(new Cookie("desconectado", "true"));
         return "redirect:/correo/usuario";
     }

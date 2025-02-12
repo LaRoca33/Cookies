@@ -21,7 +21,7 @@ package org.aaroca.cookies.POJO;
         return contraseña;
     }
 
-    public void setContraseña(String contraseña) {
+    public  void setContraseña(String contraseña) {
         this.contraseña = contraseña;
     }
 }
